@@ -61,19 +61,23 @@ class BasePage:
         except TimeoutException:
             return False
 
-    def wait_for_url(self, expected_url):
-        self.wait.until(ec.url_to_be(expected_url))
+    def is_current_url(self, expected_url):
+        try:
+            self.wait.until(ec.url_to_be(expected_url))
+            return True
+        except TimeoutException:
+            return False
 
-    def wait_for_host(self, expected_hosts):
+    def is_current_host(self, expected_host):
         def current_host(driver):
             host = urlparse(driver.current_url).hostname or ""
             return host.removeprefix("www.")
 
-        def expected_host(driver):
-            host = current_host(driver)
-            return host if host in expected_hosts else False
-
-        return self.wait.until(expected_host)
+        try:
+            self.wait.until(lambda driver: current_host(driver) == expected_host)
+            return True
+        except TimeoutException:
+            return False
 
     def switch_to_new_window(self, old_windows):
         self.wait.until(ec.new_window_is_opened(old_windows))

@@ -14,17 +14,13 @@ class TestNavigation:
 
         main_page.click_scooter_logo()
 
-        main_page.wait_for_url(Urls.BASE_URL)
-        assert driver.current_url == Urls.BASE_URL
+        assert main_page.is_current_url(Urls.BASE_URL)
 
-    @allure.title("Логотип Яндекса открывает Яндекс или Дзен в новой вкладке")
-    def test_yandex_logo_opens_expected_page_in_new_tab(self, driver):
+    @allure.title("Логотип Яндекса открывает Яндекс в новой вкладке")
+    def test_yandex_logo_opens_yandex_in_new_tab(self, driver):
         main_page = MainPage(driver)
         main_page.open_main_page()
 
         main_page.click_yandex_logo_and_switch()
 
-        # На старом стенде переход завершался на dzen.ru, а актуальная версия
-        # открывает ya.ru без дополнительного перенаправления.
-        actual_host = main_page.wait_for_host(Urls.YANDEX_DESTINATION_HOSTS)
-        assert actual_host in Urls.YANDEX_DESTINATION_HOSTS
+        assert main_page.is_current_host(Urls.YANDEX_HOST)
